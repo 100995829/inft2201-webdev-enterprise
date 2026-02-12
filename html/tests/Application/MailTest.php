@@ -11,7 +11,7 @@ class MailTest extends TestCase {
         $this->pdo = new PDO($dsn, getenv('DB_USER'), getenv('DB_PASS'));
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Clean and reinitialize the table
+        // Reset table before each test
         $this->pdo->exec("DROP TABLE IF EXISTS mail;");
         $this->pdo->exec("
             CREATE TABLE mail (
@@ -23,9 +23,65 @@ class MailTest extends TestCase {
     }
 
     public function testCreateMail() {
-        $mail = new Mail($this->pdo);
-        $id = $mail->createMail("Alice", "Hello world");
+         $mail = new Mail($this->pdo);
+        $id = $mail->createMail("Welcome", "Hello");
         $this->assertIsInt($id);
         $this->assertEquals(1, $id);
+
+        $mail->createMail("Prem Patel", "Message");
+        $stmt = $this->pdo->query("SELECT * FROM mail WHERE id = 2");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->assertEquals("Prem Patel", $row['subject']);
+        $this->assertEquals("Message", $row['body']);
     }
+
+    public function testGetMail() {
+        $mail = new Mail($this->pdo);
+        $id = $mail->createMail("Test", "Content");
+
+        $result = $mail->getMail($id);
+        $this->assertIsArray($result);
+        $this->assertEquals("Test", $result['subject']);
+        $this->assertEquals("Content", $result['body']);
+
+        $notFound = $mail->getMail(9999);
+        $this->assertFalse($notFound);
+    }
+
+    public function testListMail() {
+    $mail = new Mail($this->pdo);
+    $mail->createMail("Mail A", "Body A");
+    $mail->createMail("Mail B", "Body B");
+
+    $list = $mail->getAllMail();
+    $this->assertIsArray($list);
+    $this->assertCount(2, $list);
+    $this->assertEquals("Mail A", $list[0]['subject']);
+    $this->assertEquals("Mail B", $list[1]['subject']);
+}
+
+
+    public function testUpdateMail() {
+    $mail = new Mail($this->pdo);
+    $id = $mail->createMail("Old", "Data");
+
+    $rowsAffected = $mail->updateMail($id, "Updated", "Body");
+    $this->assertEquals(1, $rowsAffected);
+
+    $result = $mail->getMail($id);
+    $this->assertEquals("Updated", $result['subject']);
+    $this->assertEquals("Body", $result['body']);
+}
+
+    public function testDeleteMail() {
+    $mail = new Mail($this->pdo);
+    $id = $mail->createMail("To Delete", "Me");
+
+    $rowsAffected = $mail->deleteMail($id);
+    $this->assertEquals(1, $rowsAffected);
+
+    $result = $mail->getMail($id);
+    $this->assertFalse($result);
+}
 }
