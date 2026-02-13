@@ -36,6 +36,7 @@ class MailTest extends TestCase {
         $this->assertEquals("Message", $row['body']);
     }
 
+    // chat gpt
     public function testGetMail() {
         $mail = new Mail($this->pdo);
         $id = $mail->createMail("Test", "Content");
@@ -58,6 +59,7 @@ class MailTest extends TestCase {
     }
 
 
+    // chat gpt
     public function testUpdateMail() {
         $mail = new Mail($this->pdo);
         $id = $mail->createMail("Old", "Data");

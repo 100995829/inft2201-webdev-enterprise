@@ -2,6 +2,7 @@
 namespace Application;
 
 class Page {
+    // all mail
     public function list(array $items): void
     {
         if (count($items) === 0) {
@@ -13,6 +14,7 @@ class Page {
         echo json_encode($items);
     }
 
+    // by id
     public function item($item = null): void
     {
         if ($item === null) {
@@ -23,6 +25,7 @@ class Page {
         echo json_encode($item);
     }
 
+    // create mail
     public function post($item) {
         if ($item === null) {
             $this->notFound();
