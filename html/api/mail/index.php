@@ -1,5 +1,5 @@
 <?php
-require '../../../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 use Application\Mail;
 use Application\Page;
@@ -15,51 +15,24 @@ try {
     exit;
 }
 
-$uri = $_SERVER['REQUEST_URI'];
-$parts = explode('/', trim($uri, '/'));
-$id = end($parts);
-
 $mail = new Mail($pdo);
 $page = new Page();
 
-// GET /api/mail/{id}
 if ($_SERVER['REQUEST_METHOD'] === "GET") {
-    $item = $mail->getMail($id);
-    if ($item) {
-        $page->item($item);
+    $list = $mail->getAllMail();
+    if ($list) {
+        $page->list($list);
     } else {
         $page->notFound();
     }
     exit;
 }
 
-// PUT /api/mail/{id}
-if ($_SERVER['REQUEST_METHOD'] === "PUT") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $json = file_get_contents("php://input");
     $data = json_decode($json, true);
 
-    if (!isset($data['subject']) || !isset($data['body'])) {
-        $page->badRequest();
-        exit;
-    }
-
-    $success = $mail->updateMail($id, $data['subject'], $data['body']);
-    if ($success) {
-        $page->item(['id' => $id]);
-    } else {
-        $page->notFound();
-    }
-    exit;
-}
-
-// DELETE /api/mail/{id}
-if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
-    $success = $mail->deleteMail($id);
-    if ($success) {
-        $page->deleted();
-    } else {
-        $page->notFound();
-    }
+    $page->post($mail->createMail($data['subject'], $data['body']));
     exit;
 }
 

@@ -19,12 +19,11 @@ class Mail {
         return $id !== false ? (int)$id : null;
     }
 
-    public function getMail(int $id): ?array
+    public function getMail(int $id)
     {
         $stmt = $this->pdo->prepare("SELECT * FROM mail WHERE id = :id");
         $stmt->execute(['id' => $id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ?: null;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllMail(): array
@@ -43,7 +42,8 @@ class Mail {
     public function deleteMail(int $id): bool
     {
         $stmt = $this->pdo->prepare("DELETE FROM mail WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        return $stmt->rowCount() > 0;
+
+        return $stmt->execute(['id' => $id]);
+
     }
 }

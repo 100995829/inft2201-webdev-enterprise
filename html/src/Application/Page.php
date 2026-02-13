@@ -4,6 +4,11 @@ namespace Application;
 class Page {
     public function list(array $items): void
     {
+        if (count($items) === 0) {
+            http_response_code(200);
+            echo json_encode(["message" => "No mails yet!"]);
+            return;
+        }
         http_response_code(200);
         echo json_encode($items);
     }
@@ -15,6 +20,15 @@ class Page {
             return;
         }
         http_response_code(200);
+        echo json_encode($item);
+    }
+
+    public function post($item) {
+        if ($item === null) {
+            $this->notFound();
+            return;
+        }
+        http_response_code(201);
         echo json_encode($item);
     }
 
