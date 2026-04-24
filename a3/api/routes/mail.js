@@ -12,7 +12,9 @@ function loadMail(req, res, next) {
   const mail = mailData.find(m => m.id === id);
 
   if (!mail) {
-    return res.status(404).json({ error: "Mail not found" });
+    const err = new Error("Mail not found");
+    err.statusCode = 404;
+    return next(err);
   }
 
   req.mail = mail;

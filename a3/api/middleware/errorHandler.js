@@ -2,22 +2,30 @@
 // This should be the LAST app.use(...) in server.js.
 
 module.exports = function errorHandler(err, req, res, next) {
-  // TODO: Implement centralized error handling.
-  // Requirements:
-  // - Do NOT leak stack traces or internal details to the client.
-  // - Always return a consistent JSON structure, e.g.:
-  //   { error, message, statusCode, requestId, timestamp }
-  // - Use correct HTTP status codes based on the type of error
-  //   (you can attach a statusCode on your custom error objects).
-  // - Include req.requestId in the response if available.
+  const requestId = req.requestId || null;
 
-  console.error("Unhandled error for request", req.requestId, err);
+  // Determine status code
+  const statusCode = err.statusCode || err.status || 500;
 
-  res.status(500).json({
-    error: "InternalServerError",
-    message: "An unexpected error occurred.",
-    statusCode: 500,
-    requestId: req.requestId || null,
+  // Determine safe error name & message (no stack leaks)
+  const errorName = err.name || "InternalServerError";
+
+  let message = "An unexpected error occurred.";
+
+  // Only expose safe messages (4xx errors)
+  if (statusCode >= 400 && statusCode < 500) {
+    message = err.message;
+  }
+
+  // Log full error (for developers)
+  console.error(`Unhandled error for request ${requestId}`, err);
+
+  // Send structured response
+  res.status(statusCode).json({
+    error: errorName,
+    message: message,
+    statusCode: statusCode,
+    requestId: requestId,
     timestamp: new Date().toISOString()
   });
 };
