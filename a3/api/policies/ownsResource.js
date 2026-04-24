@@ -1,7 +1,8 @@
 // For the mail API, the resource will be req.mail.
 // Returns true if mail.userId === user.userId.
 
-module.exports = function ownsResource(user, mail) {
-  // TODO: implement
-  return false;
-};
+function ownsResource(user, mail) {
+  return user && mail && user.userId === mail.userId;
+}
+
+module.exports = ownsResource;

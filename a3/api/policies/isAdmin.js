@@ -1,6 +1,7 @@
 // Returns true if the user has the "admin" role.
 
-module.exports = function isAdmin(user) {
-  // TODO: implement
-  return false;
-};
+function isAdmin(user) {
+  return user && user.role === "admin";
+}
+
+module.exports = isAdmin;
