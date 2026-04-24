@@ -1,0 +1,2 @@
+I used ChatGPT to understand JWT authentication, RBAC implementation, and debugging Docker setup.
+All code was reviewed, tested, and modified to meet assignment requirements.
