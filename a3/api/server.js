@@ -1,6 +1,7 @@
 const express = require("express");
 const requestLogger = require("./middleware/requestLogger");
 const errorHandler = require("./middleware/errorHandler");
+const rateLimit = require("./middleware/rateLimit");
 
 const authRoutes = require("./routes/auth");
 const mailRoutes = require("./routes/mail");

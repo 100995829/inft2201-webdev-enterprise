@@ -26,6 +26,7 @@ module.exports = function errorHandler(err, req, res, next) {
     message: message,
     statusCode: statusCode,
     requestId: requestId,
+    retryAfter: err.retryAfter || null,
     timestamp: new Date().toISOString()
   });
 };
